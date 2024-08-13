@@ -3,7 +3,7 @@ use crate::mixins::foldable::Foldable;
 use crate::mixins::verifiable::Verifiable;
 use crate::repr::feature::Feature;
 
-trait Representation<T, F> : Verifiable + FlatMappable<T> + Foldable<T>
+pub trait Representation<T, F> : Verifiable + FlatMappable<T> + Foldable<T>
 where
     F : Feature<T, F>
 {
