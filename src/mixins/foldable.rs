@@ -1,3 +1,3 @@
-pub trait Foldable<T> {
-    fn fold<R>(&self, initial: R, f: fn(R, T) -> R) -> R;
+pub trait Foldable<A> {
+    fn fold<B>(&self, initial: B, f: fn(B, A) -> B) -> B;
 }

@@ -15,6 +15,8 @@ where
 {
     pub representation: R,
     pub fitness: f64,
+    _t: std::marker::PhantomData<T>,
+    _f: std::marker::PhantomData<F>,
 }
 
 impl<T, F, R> Individual<T, F, R>
@@ -25,7 +27,9 @@ where
     pub fn new(representation: R) -> Self {
         Individual {
             representation,
-            fitness: f64::nan(),
+            fitness: f64::NAN,
+            _t: Default::default(),
+            _f: Default::default(),
         }
     }
 
@@ -35,19 +39,6 @@ where
 
     pub fn is_evaluated(&self) -> bool {
         !self.fitness.is_nan()
-    }
-
-    pub fn to_string(&self) -> String {
-        match TO_STRING_MODE.lock().unwrap().deref() {
-            ToStringMode::Simple =>
-                format!("{} -> {}", self.representation.to_string(), self.fitness),
-            ToStringMode::Default =>
-                format!(
-                    "Individual(representation={}, fitness={})",
-                    self.representation.to_string(),
-                    self.fitness
-                )
-        }
     }
 }
 
@@ -76,7 +67,7 @@ where
     F: Feature<T, F>,
     R: Representation<T, F>
 {
-    fn fold<R>(&self, initial: R, f: fn(R, T) -> R) -> R {
+    fn fold<B>(&self, initial: B, f: fn(B, T) -> B) -> B {
         self.representation.fold(initial, f)
     }
 }
@@ -84,26 +75,17 @@ where
 impl<T, F, R> PartialEq for Individual<T, F, R>
 where
     F: Feature<T, F>,
-    R: Representation<T, F>
+    R: Representation<T, F> + PartialEq
 {
     fn eq(&self, other: &Self) -> bool {
-        self.representation.eq(&other.representation)
+        self.representation == other.representation
+            && self.fitness == other.fitness
     }
 }
 
 impl<T, F, R> Eq for Individual<T, F, R>
 where
     F: Feature<T, F>,
-    R: Representation<T, F>
+    R: Representation<T, F> + Eq
 {
-}
-
-impl<T, F, R> Hash for Individual<T, F, R>
-where
-    F: Feature<T, F>,
-    R: Representation<T, F>
-{
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        crate::domain::hash(&[&self.representation, &self.fitness]);
-    }
 }
