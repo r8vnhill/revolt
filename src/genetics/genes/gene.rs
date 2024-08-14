@@ -5,7 +5,8 @@ use crate::mixins::verifiable::Verifiable;
 
 pub trait Gene<T, G>: Feature<T, G> + Verifiable + FlatMappable<T>
 where
-    G: Gene<T, G>,
+    T: Clone,
+    G: Gene<T, G>
 {
     fn generate(&self, value: &T, rng: &mut impl rand::Rng) -> T;
 
