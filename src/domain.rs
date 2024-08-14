@@ -117,5 +117,15 @@ mod tests {
             set_equality_threshold(value);
             expect!(get_equality_threshold()).to(be_equal_to(value));
         }
+
+        #[test]
+        fn test_set_equality_threshold_panics(value in -1000.0..0.0) {
+            expect!(std::panic::catch_unwind(|| set_equality_threshold(value))).to(be_err());
+        }
+    }
+
+    #[test]
+    fn test_set_equality_threshold_panics_nan() {
+        expect!(std::panic::catch_unwind(|| set_equality_threshold(f64::NAN))).to(be_err());
     }
 }

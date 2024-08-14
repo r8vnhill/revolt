@@ -1,2 +1,2 @@
 pub mod verifiable;
-mod flat_mappable;
+pub mod flat_mappable;
