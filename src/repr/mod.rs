@@ -1,2 +1,2 @@
 pub mod feature;
-mod representation;
+pub mod representation;
