@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 /// Represents a feature in an evolutionary algorithm.
 ///
 /// A feature is an atomic component in an evolutionary algorithm. For instance, a gene is a feature
@@ -36,7 +38,7 @@ where
     F: Feature<T, F>,
 {
     /// Returns the value held by the feature.
-    fn value(&self) -> &T;
+    fn get_value(&self) -> &T;
 
     /// Creates a duplicate of the feature with the specified value.
     ///
@@ -46,4 +48,46 @@ where
     /// # Returns
     /// A new feature with the specified value.
     fn duplicate_with_value(&self, value: T) -> F;
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub(crate) struct SimpleFeature<T> {
+    value: T,
+}
+
+impl<T> Feature<T, SimpleFeature<T>> for SimpleFeature<T>
+where
+    T: Clone,
+{
+    fn get_value(&self) -> &T {
+        &self.value
+    }
+
+    fn duplicate_with_value(&self, value: T) -> SimpleFeature<T> {
+        SimpleFeature { value }
+    }
+}
+
+impl<T> Display for SimpleFeature<T>
+where
+    T: Display,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.value)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use expectest::prelude::*;
+    use super::*;
+
+    #[test]
+    fn simple_feature() {
+        let feature = SimpleFeature { value: 42 };
+        expect!(feature.get_value()).to(be_equal_to(&42));
+
+        let new_feature = feature.duplicate_with_value(100);
+        expect!(new_feature.get_value()).to(be_equal_to(&100));
+    }
 }
