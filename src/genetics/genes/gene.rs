@@ -13,8 +13,11 @@ where
         self.duplicate_with_value(new_value)
     }
 
-    fn flatten(&self) -> Vec<&T> {
-        vec![self.get_value()]
+    fn flatten(&self) -> Vec<T>
+    where
+        T: Clone,
+    {
+        vec![self.get_value().clone()]
     }
 }
 
@@ -65,7 +68,7 @@ mod tests {
         fn gene_can_be_flattened(gene in simple_gene_default_strategy()) {
             let flattened = gene.flatten();
             assert_eq!(flattened.len(), 1);
-            assert_eq!(flattened[0], gene.get_value());
+            assert_eq!(flattened[0], *gene.get_value());
         }
     }
 
